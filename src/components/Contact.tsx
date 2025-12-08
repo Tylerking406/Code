@@ -5,6 +5,24 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Label } from "./ui/label";
 import { toast } from "sonner";
+import emailjs from "@emailjs/browser";
+
+// Provide typings for Vite's import.meta.env so TypeScript knows about our keys
+declare global {
+  interface ImportMetaEnv {
+    readonly VITE_EMAILJS_SERVICE_ID: string;
+    readonly VITE_EMAILJS_TEMPLATE_ID: string;
+    readonly VITE_EMAILJS_PUBLIC_KEY: string;
+    // add other VITE_... vars here if needed
+  }
+
+  interface ImportMeta {
+    readonly env: ImportMetaEnv;
+  }
+}
+
+// Initialize EmailJS with your public key
+emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
 
 export function Contact() {
   const [formData, setFormData] = useState({
@@ -19,21 +37,56 @@ export function Contact() {
     additionalDetails: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Booking request sent! We'll be in touch soon.");
-    // Reset form
-    setFormData({
-      fullName: "",
-      email: "",
-      mobile: "",
-      serviceType: "",
-      pickupDate: "",
-      pickupTime: "",
-      pickupLocation: "",
-      dropoffLocation: "",
-      additionalDetails: "",
-    });
+    setIsLoading(true);
+
+    // Prepare template parameters for EmailJS
+    const templateParams = {
+      to_email: "Babinatauenterprise@gmail.com",
+      from_name: formData.fullName,
+      from_email: formData.email,
+      mobile: formData.mobile,
+      service_type: formData.serviceType,
+      pickup_date: formData.pickupDate,
+      pickup_time: formData.pickupTime,
+      pickup_location: formData.pickupLocation,
+      dropoff_location: formData.dropoffLocation,
+      additional_details: formData.additionalDetails,
+    };
+
+    // Send email using EmailJS
+    emailjs
+      .send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        templateParams
+      )
+      .then(
+        (response) => {
+          toast.success("Booking request sent! We'll be in touch soon.");
+          // Reset form
+          setFormData({
+            fullName: "",
+            email: "",
+            mobile: "",
+            serviceType: "",
+            pickupDate: "",
+            pickupTime: "",
+            pickupLocation: "",
+            dropoffLocation: "",
+            additionalDetails: "",
+          });
+          setIsLoading(false);
+        },
+        (error) => {
+          console.error("EmailJS error:", error);
+          toast.error("Failed to send booking request. Please try again.");
+          setIsLoading(false);
+        }
+      );
   };
 
   const handleChange = (
@@ -285,8 +338,9 @@ export function Contact() {
               <Button
                 type="submit"
                 className="w-full bg-[#C62828] hover:bg-[#C62828]/90 py-6"
+                disabled={isLoading}
               >
-                Send booking request
+                {isLoading ? "Sending..." : "Send booking request"}
               </Button>
             </form>
           </div>
