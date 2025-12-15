@@ -1,4 +1,4 @@
-import { Toaster } from "./components/ui/sonner";
+import { Sonner } from "./components/ui/sonner";
 import { Navbar } from "./components/Navbar";
 import { Hero } from "./components/Hero";
 import { Services } from "./components/Services";
@@ -17,7 +17,7 @@ export default function App() {
       <WhyUs />
       <Contact />
       <Footer />
-      <Toaster />
+      <Sonner />
     </div>
   );
 }
