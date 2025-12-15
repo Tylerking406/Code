@@ -154,9 +154,9 @@ export function Footer() {
               © 2025 Babina Tau Enterprises (PTY) LTD. All rights reserved.
             </p>
             <div className="flex gap-4 text-[#777777] text-sm">
-              <button className="hover:text-white transition-colors">Terms & Conditions</button>
+              {/* <button className="hover:text-white transition-colors">Terms & Conditions</button> */}
               <span>•</span>
-              <button className="hover:text-white transition-colors">Privacy Policy</button>
+              {/* <button className="hover:text-white transition-colors">Privacy Policy</button> */}
             </div>
           </div>
         </div>
